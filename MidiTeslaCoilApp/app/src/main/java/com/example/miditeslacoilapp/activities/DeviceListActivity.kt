@@ -3,6 +3,7 @@ package com.example.miditeslacoilapp.activities
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.os.Bundle
+import android.os.ParcelUuid
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -13,6 +14,7 @@ import com.example.miditeslacoilapp.Extensions.isLocationPermissionGranted
 import com.example.miditeslacoilapp.Extensions.requestLocationPermission
 import com.example.miditeslacoilapp.R
 import com.example.miditeslacoilapp.ui.adapters.ScanResultAdapter
+import com.example.miditeslacoilapp.utils.BluetoothUtils
 import com.polidea.rxandroidble2.RxBleClient
 import com.polidea.rxandroidble2.scan.ScanFilter
 import com.polidea.rxandroidble2.scan.ScanResult
@@ -20,7 +22,6 @@ import com.polidea.rxandroidble2.scan.ScanSettings
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-
 
 class DeviceListActivity : AppCompatActivity() {
     private val rxBleClient: RxBleClient = BluetoothApplication.rxBleClient
@@ -35,17 +36,16 @@ class DeviceListActivity : AppCompatActivity() {
     private val isScanning: Boolean
         get() = scanDisposable != null
 
-    companion object{
+    companion object {
         private const val REQUEST_ENABLE_BT = 1
     }
 
     override fun onStart() {
         super.onStart()
-        if(!BluetoothAdapter.getDefaultAdapter().isEnabled){
+        if (!BluetoothAdapter.getDefaultAdapter().isEnabled) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
-        }
-        else configureResultList(findViewById(R.id.scan_results))
+        } else configureResultList(findViewById(R.id.scan_results))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,11 +55,10 @@ class DeviceListActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == REQUEST_ENABLE_BT){
-            if(resultCode == RESULT_OK){
+        if (requestCode == REQUEST_ENABLE_BT) {
+            if (resultCode == RESULT_OK) {
                 configureResultList(findViewById(R.id.scan_results))
-            }
-            else{
+            } else {
                 Toast.makeText(this, "Bluetooth was not enabled", Toast.LENGTH_SHORT).show()
             }
         }
@@ -95,6 +94,7 @@ class DeviceListActivity : AppCompatActivity() {
                 .build()
 
         val scanFilter = ScanFilter.Builder()
+                .setServiceUuid(ParcelUuid(BluetoothUtils.serviceUUID))
                 .build()
 
         return rxBleClient.scanBleDevices(scanSettings, scanFilter)
@@ -113,7 +113,7 @@ class DeviceListActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(item.itemId == R.id.action_search_devices){
+        if (item.itemId == R.id.action_search_devices) {
             onScanToggleClick()
         }
         return super.onOptionsItemSelected(item)

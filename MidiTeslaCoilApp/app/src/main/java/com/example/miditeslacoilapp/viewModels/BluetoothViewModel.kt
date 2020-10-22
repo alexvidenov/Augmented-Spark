@@ -3,6 +3,7 @@ package com.example.miditeslacoilapp.viewModels
 import androidx.lifecycle.ViewModel
 import com.example.miditeslacoilapp.BluetoothApplication
 import com.example.miditeslacoilapp.Extensions.isConnected
+import com.example.miditeslacoilapp.utils.BluetoothUtils
 import com.jakewharton.rx.ReplayingShare
 import com.polidea.rxandroidble2.RxBleConnection
 import com.polidea.rxandroidble2.RxBleDevice
@@ -12,11 +13,13 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
 import java.util.*
 
-private val characteristicUuid = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb")
-
 class BluetoothViewModel(
         private val macAddress: String
 ) : ViewModel() {
+
+    companion object{
+        private val characteristicUuid = BluetoothUtils.characteristicUuid
+    }
 
     private lateinit var bleDevice: RxBleDevice
 

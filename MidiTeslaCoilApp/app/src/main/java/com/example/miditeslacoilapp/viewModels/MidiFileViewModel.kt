@@ -13,5 +13,4 @@ class MidiFileViewModel : ViewModel() {
     fun choseFile(file: File){
         _midiFileChosen.postValue(file)
     }
-
 }

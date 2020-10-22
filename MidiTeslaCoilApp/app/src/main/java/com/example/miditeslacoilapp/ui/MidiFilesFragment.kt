@@ -38,7 +38,7 @@ class MidiFilesFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        if(!isStoragePermissionGranted()){
+        if (!isStoragePermissionGranted()) {
             requestStoragePermission()
         }
         val songs = readMidiFiles(Environment.getExternalStorageDirectory())
